@@ -37,5 +37,12 @@
     <Reference Include="UnityEngine.UIModule">
       <HintPath>..\..\..\..\..\..\..\Applications\Unity\Hub\Editor\2019.2.2f1\PlaybackEngines\LinuxStandaloneSupport\Variations\mono\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\..\..\..\Applications\Unity\Hub\Editor\2019.2.2f1\PlaybackEngines\LinuxStandaloneSupport\Variations\mono\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\..\Library\Application Support\Steam\steamapps\common\Kerbal Space Program\KSP.app\Contents\Resources\Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

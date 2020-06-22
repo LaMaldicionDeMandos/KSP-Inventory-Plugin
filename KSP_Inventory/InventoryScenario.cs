@@ -6,27 +6,43 @@ namespace inventory
     [KSPScenario(ScenarioCreationOptions.AddToNewCareerGames | ScenarioCreationOptions.AddToExistingCareerGames, GameScenes.EDITOR, GameScenes.PSYSTEM, GameScenes.SPACECENTER, GameScenes.FLIGHT)]
     public class InventoryScenario : ScenarioModule
     {
+        private static InventoryScenario _instance;
+        public static InventoryScenario instance()
+        {
+            return _instance;
+        }
+
+        private List<AvailablePart> availableParts = new List<AvailablePart>();
+
+        public void Start()
+        {
+            _instance = this;
+            /*
+            PartLoader partLoader = PartLoader.Instance;
+            if (!partLoader.IsReady()) partLoader.StartLoad();
+            List<AvailablePart> parts = partLoader.loadedParts;
+            parts.ForEach(part =>
+            {
+                Debug.Log("[INVENTORY] Part: " + part.title + " - " + part.name);
+                availableParts.Add(part);
+            });
+            parts.RemoveAll(part => true);
+            */
+        }
 
         public override void OnSave(ConfigNode node)
         {
-
-            base.OnSave(node);
-            ScreenMessages.PostScreenMessage("        OnSave", 3);
-            print("Saved o sea anda");
-
-            List<AvailablePart> parts = PartLoader.Instance.loadedParts;
-            parts.ForEach(delegate (AvailablePart part)
-            {
-                print(part.name);
-            });
-            print("imprimio algo?");
-            
+            base.OnSave(node); 
         }
 
         public override void OnLoad(ConfigNode node)
         {
             base.OnLoad(node);
-            ScreenMessages.PostScreenMessage("        OnLoad", 3);
+        }
+
+        public List<AvailablePart> GetAvailableParts()
+        {
+            return availableParts;
         }
 
     }
