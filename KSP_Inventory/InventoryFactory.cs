@@ -6,6 +6,7 @@ namespace inventory
     [KSPAddon(KSPAddon.Startup.EditorAny, false)]
     public class InventoryFactory : MonoBehaviour
     {
+        private List<AvailablePart> EMPTY_LIST = new List<AvailablePart>();
         private static int LEFT_SCREEN_WEIGHT = 262;
 
         private static int BUTTONS_PANEL_HEIGHT = 60;
@@ -34,15 +35,21 @@ namespace inventory
         {
             log("Factory loaded");
             editor = EditorLogic.fetch;
-
-            AddListeners();
             LoadParts();
             CreateRects();
+            AddListeners();
+            editor.launchBtn.enabled = false;
         }
 
         private void AddListeners()
         {
             GameEvents.onEditorPartEvent.Add(PartEvent);
+            GameEvents.FindEvent<EventData<PartCategories>>("onSelectCategory").Add(OnSelectCategory);
+        }
+
+        private void OnSelectCategory(PartCategories category)
+        {
+            currentCategory = category;
         }
 
         private void LoadParts()
@@ -71,6 +78,8 @@ namespace inventory
         void OnDestroy()
         {
             GameEvents.onEditorPartEvent.Remove(PartEvent);
+            GameEvents.FindEvent<EventData<PartCategories>>("onSelectCategory").Remove(OnSelectCategory);
+
         }
 
         private void PartEvent(ConstructionEventType type, Part part)
@@ -110,7 +119,9 @@ namespace inventory
             if (isFactoryOpen || isInventoryOpen) categoryTools.show();
             if (isFactoryOpen)
             {
-                factoryPanel.show(GetInstanceID(), partsByCategory[currentCategory]);
+                List<AvailablePart> parts = EMPTY_LIST;
+                if (partsByCategory.ContainsKey(currentCategory)) parts = partsByCategory[currentCategory];
+                factoryPanel.show(GetInstanceID(), parts);
             }
             if (isInventoryOpen)
             {

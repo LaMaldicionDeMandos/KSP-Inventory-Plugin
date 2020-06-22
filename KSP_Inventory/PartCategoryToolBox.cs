@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace inventory
@@ -6,20 +7,47 @@ namespace inventory
     public class PartCategoryToolBox
     {
 
+        public static EventData<PartCategories> onSelectCategory = new EventData<PartCategories>("onSelectCategory");
+
         public static int SCREEN_HEIGHT = 40;
         public static int SCREEN_WEIGHT = 570;
+
+        private static List<PartCategories> categories = new List<PartCategories>(new PartCategories[] {
+            PartCategories.Pods,
+            PartCategories.FuelTank,
+            PartCategories.Engine,
+            PartCategories.Control,
+            PartCategories.Structural,
+            PartCategories.Robotics,
+            PartCategories.Coupling,
+            PartCategories.Payload,
+            PartCategories.Aero,
+            PartCategories.Ground,
+            PartCategories.Thermal,
+            PartCategories.Electrical,
+            PartCategories.Communication,
+            PartCategories.Science,
+            PartCategories.Cargo,
+            PartCategories.Utility,
+            PartCategories.Propulsion
+        });
 
         private PartCategoryIconHelper iconHelper;
 
         Rect panelScreen;
         RectOffset buttonsPadding = new RectOffset(1, 1, 1, 1);
         RectOffset buttonsMaging = new RectOffset(0, 0, 0, 0);
+        private List<GUIContent> buttons;
+
         GUIStyle mySty;
+
+        private int selectedItem = 0;
 
         public PartCategoryToolBox(int x, int y)
         {
             iconHelper = new PartCategoryIconHelper();
             panelScreen = new Rect(x, y, SCREEN_WEIGHT, SCREEN_HEIGHT);
+            buttons = buildButtons();
         }
 
         public void show()
@@ -32,25 +60,41 @@ namespace inventory
             mySty.padding = buttonsPadding;
             GUILayout.BeginArea(panelScreen);
             GUILayout.BeginHorizontal();
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Pods).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.FuelTank).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Engine).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Control).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Structural).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Robotics).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Coupling).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Payload).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Aero).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Ground).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Thermal).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Electrical).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Communication).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Science).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Cargo).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Utility).iconNormal, mySty, GUILayout.ExpandWidth(true));
-            GUILayout.Button(iconHelper.GetIcon(PartCategories.Propulsion).iconNormal, mySty, GUILayout.ExpandWidth(true));
+            int oldSelectedItem = selectedItem;
+            selectedItem = GUILayout.SelectionGrid(selectedItem, buttons.ToArray(), 17, mySty);
+            if (selectedItem != oldSelectedItem) PartCategoryToolBox.onSelectCategory.Fire(categories[selectedItem]);
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
+        }
+
+        private List<GUIContent> buildButtons()
+        {
+            List<GUIContent> buttons = new List<GUIContent>();
+            buttons.Add(buildButton(PartCategories.Pods));
+            buttons.Add(buildButton(PartCategories.FuelTank));
+            buttons.Add(buildButton(PartCategories.Engine));
+            buttons.Add(buildButton(PartCategories.Control));
+            buttons.Add(buildButton(PartCategories.Structural));
+            buttons.Add(buildButton(PartCategories.Robotics));
+            buttons.Add(buildButton(PartCategories.Coupling));
+            buttons.Add(buildButton(PartCategories.Payload));
+            buttons.Add(buildButton(PartCategories.Aero));
+            buttons.Add(buildButton(PartCategories.Ground));
+            buttons.Add(buildButton(PartCategories.Thermal));
+            buttons.Add(buildButton(PartCategories.Electrical));
+            buttons.Add(buildButton(PartCategories.Communication));
+            buttons.Add(buildButton(PartCategories.Science));
+            buttons.Add(buildButton(PartCategories.Cargo));
+            buttons.Add(buildButton(PartCategories.Utility));
+            buttons.Add(buildButton(PartCategories.Propulsion));
+            return buttons;
+        }
+
+        private GUIContent buildButton(PartCategories category)
+        {
+            Texture texture = iconHelper.GetIcon(category).iconNormal;
+            string title = PartCategories.Pods.Description();
+            return new GUIContent(texture, title);
         }
     }
 }
