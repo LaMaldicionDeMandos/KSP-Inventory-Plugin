@@ -31,6 +31,8 @@ namespace inventory
         InventoryPanel inventoryPanel;
         PartCategoryToolBox categoryTools;
 
+        private bool flag;
+
         public void Start()
         {
             log("Factory loaded");
@@ -38,13 +40,25 @@ namespace inventory
             LoadParts();
             CreateRects();
             AddListeners();
-            editor.launchBtn.enabled = false;
+            editor.launchBtn.onClick.RemoveAllListeners();
+            editor.launchBtn.onClick.AddListener(() => {
+                if (flag)
+                {
+                    ScreenMessages.PostScreenMessage("Te dejo!!", 3);
+                    editor.launchVessel();
+                } else
+                {
+                    ScreenMessages.PostScreenMessage("No te dejo!!", 3);
+                }
+                flag = !flag;
+            });
         }
 
         private void AddListeners()
         {
             GameEvents.onEditorPartEvent.Add(PartEvent);
             GameEvents.FindEvent<EventData<PartCategories>>("onSelectCategory").Add(OnSelectCategory);
+           
         }
 
         private void OnSelectCategory(PartCategories category)

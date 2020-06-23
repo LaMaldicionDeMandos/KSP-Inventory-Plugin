@@ -6,44 +6,41 @@ namespace inventory
     [KSPScenario(ScenarioCreationOptions.AddToNewCareerGames | ScenarioCreationOptions.AddToExistingCareerGames, GameScenes.EDITOR, GameScenes.PSYSTEM, GameScenes.SPACECENTER, GameScenes.FLIGHT)]
     public class InventoryScenario : ScenarioModule
     {
-        private static InventoryScenario _instance;
-        public static InventoryScenario instance()
-        {
-            return _instance;
-        }
+        [KSPField(isPersistant = true, guiActive = false)]
+        public string gameName;
 
-        private List<AvailablePart> availableParts = new List<AvailablePart>();
+        [KSPField(isPersistant = true, guiActive = false)]
+        public int starts;
 
         public void Start()
         {
-            _instance = this;
-            /*
-            PartLoader partLoader = PartLoader.Instance;
-            if (!partLoader.IsReady()) partLoader.StartLoad();
-            List<AvailablePart> parts = partLoader.loadedParts;
-            parts.ForEach(part =>
-            {
-                Debug.Log("[INVENTORY] Part: " + part.title + " - " + part.name);
-                availableParts.Add(part);
-            });
-            parts.RemoveAll(part => true);
-            */
+            gameName = HighLogic.CurrentGame.Title;
+            starts++;
         }
 
         public override void OnSave(ConfigNode node)
         {
-            base.OnSave(node); 
+            ConstructionState state = new ConstructionState(Planetarium.GetUniversalTime(), 600);
+            state.Save(node);
+            base.OnSave(node);
+            Debug.Log("[INVENTORY] Save Config node: " + node.ToString());
+
         }
 
         public override void OnLoad(ConfigNode node)
         {
             base.OnLoad(node);
+            Debug.Log("[INVENTORY] Load Config node: " + node.ToString());
+            ConfigNode[] states = node.GetNodes("STATE");
+            foreach (ConfigNode n in states)
+            {
+                if (n.GetValue("name") == "building")
+                {
+                    ConstructionState state = new ConstructionState();
+                    state.Load(n);
+                    Debug.Log("[INVENTORY] Load state, startDate: " + state.startDate + " duration: " + state.duration);
+                }
+            }
         }
-
-        public List<AvailablePart> GetAvailableParts()
-        {
-            return availableParts;
-        }
-
     }
 }
