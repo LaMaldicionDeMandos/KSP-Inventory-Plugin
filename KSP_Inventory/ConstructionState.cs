@@ -3,6 +3,8 @@ namespace inventory
 {
     public class ConstructionState: State
     {
+        public static string STATE_NAME = "building";
+
         private double _startDate;
         private double _duration;
 
@@ -16,22 +18,23 @@ namespace inventory
         {
         }
 
-        public string GetName()
+        public override string GetName()
         {
-            return "building";
+            return STATE_NAME;
         }
 
-        public void Load(ConfigNode node)
+        public override void Load(ConfigNode node)
         {
             _startDate = Convert.ToDouble(node.GetValue("startDate"));
             _duration = Convert.ToDouble(node.GetValue("duration"));
         }
 
-        public void Save(ConfigNode node)
+        public override void Save(ConfigNode node)
         {
-            ConfigNode localNode = new ConfigNode("STATE");
+            ConfigNode localNode = new ConfigNode(State.NODE_NAME);
             localNode.AddValue("startDare", _startDate);
             localNode.AddValue("duration", _duration);
+            localNode.AddValue("name", GetName());
             node.AddNode(localNode);
         }
 
